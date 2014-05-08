@@ -1,6 +1,7 @@
 package com.deviceapplications;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import android.content.Context;
@@ -38,6 +39,8 @@ public class DeviceApplicationDetails {
 		long endTime = System.currentTimeMillis();
 		System.out.println("Time taken : " + (endTime - startTime));
 
+		Collections.sort(filteredApps);
+		
 		return filteredApps;
 	}
 

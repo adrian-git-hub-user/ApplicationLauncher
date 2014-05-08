@@ -88,6 +88,11 @@ public class AppInfoAdapter extends BaseAdapter {
 
 		String storageName = STORAGE_NAME.APP_USAGE.toString();
 
+		if (oa.readObjectFromMemory(storageName) == null) {
+			oa.writeObjectToMemory(storageName,
+					new HashMap<String , Integer>());
+		}
+		
 		String packageName = aInfo.packageName;
 
 		Map<String, Integer> appUsage = (HashMap<String, Integer>) oa

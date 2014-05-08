@@ -51,15 +51,15 @@ public class MainActivity extends Activity {
 
 		appSearchTextBox = (EditText) findViewById(R.id.editText);
 
-		AppInfoSerializable ais = new AppInfoSerializable();
+		//AppInfoSerializable ais = new AppInfoSerializable();
 		// ais.setAppName("test");
 		dad = new DeviceApplicationDetails(this.getApplicationContext());
 
-		List<AppInfoSerializable> l = new ArrayList<AppInfoSerializable>();
-		l.add(ais);
+		//List<AppInfoSerializable> l = new ArrayList<AppInfoSerializable>();
+		//l.add(ais);
 
-		ObjectAccessor oa = new ObjectAccessor(this.getApplicationContext());
-		oa.writeObjectToMemory("myobject", l);
+		//ObjectAccessor oa = new ObjectAccessor(this.getApplicationContext());
+		//oa.writeObjectToMemory("myobject", l);
 
 
 		setupUi();
