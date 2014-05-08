@@ -1,10 +1,21 @@
 package com.applicationlauncher;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.application.AppInfoDetails;
+import com.application.AppInfoSerializable;
 import com.deviceapplications.DeviceApplicationDetails;
 import com.deviceapplications.Utilities;
+import com.google.gson.Gson;
+import com.storage.ObjectAccessor;
+import com.storage.STORAGE_NAME;
 
 import android.app.Activity;
 import android.content.pm.ApplicationInfo;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -14,119 +25,140 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
- 
+
 public class MainActivity extends Activity {
+
+	private EditText appSearchTextBox;
+	private ListView mListAppInfo;
+	private DeviceApplicationDetails dad;
+	private AppInfoAdapter adapter;
+	private String userInput;
+
+	private void updateView(String userInput) {
+		adapter = new AppInfoAdapter(this,
+				dad.getInstalledApplicationByName(userInput),
+				getPackageManager());
+		mListAppInfo.setAdapter(adapter);
+	}
+
+	private final Handler myHandler = new Handler();
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		// set layout for the main screen
+		setContentView(R.layout.layout_main);
+
+		appSearchTextBox = (EditText) findViewById(R.id.editText);
+
+		AppInfoSerializable ais = new AppInfoSerializable();
+		// ais.setAppName("test");
+		dad = new DeviceApplicationDetails(this.getApplicationContext());
+
+		List<AppInfoSerializable> l = new ArrayList<AppInfoSerializable>();
+		l.add(ais);
+
+		ObjectAccessor oa = new ObjectAccessor(this.getApplicationContext());
+		oa.writeObjectToMemory("myobject", l);
+
+
+		setupUi();
+
+	}
+
+	private void addUsage(String packageName){
+		
+		final ObjectAccessor oa = new ObjectAccessor(
+				this.getApplicationContext());
+		
+		String storageName = STORAGE_NAME.APP_USAGE.toString();
+		
+		if (oa.readObjectFromMemory(storageName) == null) {
+			oa.writeObjectToMemory(storageName,
+					new HashMap<String , Integer>());
+		}
+
+		Map<String , Integer> appUsage = (HashMap<String , Integer>) oa
+				.readObjectFromMemory(storageName);
+
+		if (appUsage.get(packageName) == null) {
+			appUsage.put(packageName, 1);
+		} else {
+			appUsage.put(packageName, appUsage.get(packageName) + 1);
+		}
+		oa.writeObjectToMemory(STORAGE_NAME.APP_USAGE.toString(),
+				appUsage);
+		
+		System.out.println("Current size of " + packageName + " : "
+				+ appUsage.get(packageName));
+		
+	}
 	
-	private EditText yourEditText;
-    private ListView mListAppInfo;
-    private DeviceApplicationDetails dad;  
-    private AppInfoAdapter adapter;
-    private String userInput;
-    
-    private void updateView(String userInput){ 	
-    	adapter = new AppInfoAdapter(this, dad.getInstalledApplicationByName(userInput) , getPackageManager());
-       	mListAppInfo.setAdapter(adapter);
-    }
-    
-    private final Handler myHandler = new Handler();
-    
-    final Runnable updateRunnable = new Runnable() {
-        public void run() {
-            //call the activity method that updates the UI
-            updateUI();
-        }
-    };
-    
-    private void updateUI()
-    {
-    	adapter = new AppInfoAdapter(this, dad.getInstalledApplicationByName(this.userInput) , getPackageManager());
-       	mListAppInfo.setAdapter(adapter);
-    }
-    
-    private void doSomeHardWork(final String userInput)
-    {
-    	this.userInput = userInput;
-         //update the UI using the handler and the runnable
-         myHandler.post(updateRunnable);
+	private void setupUi() {
 
-    }
-    
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // set layout for the main screen
-        setContentView(R.layout.layout_main);
- 
-        yourEditText = (EditText) findViewById(R.id.editText);
-        
-        dad = new DeviceApplicationDetails(this.getApplicationContext());
-        
-        // load list application
-        mListAppInfo = (ListView)findViewById(R.id.lvApps);
-        // create new adapter
-        adapter = new AppInfoAdapter(this, Utilities.getInstalledApplication(this), getPackageManager());
-        // set adapter to list view
-        mListAppInfo.setAdapter(adapter);
-        //adapter.getp
-        // implement event when an item on list view is selected
-        mListAppInfo.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView parent, View view, int pos, long id) {
-                // get the list adapter
-                AppInfoAdapter appInfoAdapter = (AppInfoAdapter)parent.getAdapter();
-                // get selected item on the list
-                ApplicationInfo appInfo = (ApplicationInfo)appInfoAdapter.getItem(pos);
+		mListAppInfo = (ListView) findViewById(R.id.lvApps);
+		List<AppInfoDetails> aiList = Utilities.getInstalledApplication(this);
+		adapter = new AppInfoAdapter(this, aiList, getPackageManager());
 
-                // launch the selected application
-                Utilities.launchApp(parent.getContext(), getPackageManager(), appInfo.packageName);
-            }
-        });
-        
-        yourEditText.addTextChangedListener(new TextWatcher() {
+		mListAppInfo.setAdapter(adapter);
+		// adapter.getp
+		// implement event when an item on list view is selected
+		mListAppInfo.setOnItemClickListener(new OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView parent, View view, int pos,
+					long id) {
+
+				// get the list adapter
+				AppInfoAdapter appInfoAdapter = (AppInfoAdapter) parent
+						.getAdapter();
+
+				// get selected item on the list
+				AppInfoDetails appInfo = (AppInfoDetails) appInfoAdapter
+						.getItem(pos);
+
+				String packageName = appInfo.getAppInfo().packageName;
+				
+				addUsage(packageName);
+				
+				// launch the selected application
+				Utilities.launchApp(parent.getContext(), getPackageManager(),
+						packageName);
+			}
+		});
+
+		appSearchTextBox.setTextSize(22.0f);
+
+		appSearchTextBox.addTextChangedListener(new TextWatcher() {
 
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count,
 					int after) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
 			@Override
-			public void onTextChanged(final CharSequence s, int start, int before,
-					int count) {
-				
-				Runnable runnable = new Runnable() {
-		            @Override
-		            public void run() {                
-		                {                    
-		                	updateView(s.toString());
-		                }
-		            }
-		        };   
-		        
-		        myHandler.post(runnable);
-		        
-			
-	/*			 new Thread(new Runnable() {
+			public void onTextChanged(final CharSequence s, int start,
+					int before, int count) {
 
+				Runnable runnable = new Runnable() {
 					@Override
 					public void run() {
-						
-						
-						doSomeHardWork(s.toString());
-					} 
-   
-				 }).start();*/
+						{
+							updateView(s.toString());
+						}
+					}
+				};
 
+				myHandler.post(runnable);
 			}
 
 			@Override
 			public void afterTextChanged(Editable s) {
 				// TODO Auto-generated method stub
-				
+
 			}
 
-
-         });
-    }
+		});
+	}
 }

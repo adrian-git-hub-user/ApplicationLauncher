@@ -4,55 +4,34 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
+
+import com.application.AppInfoDetails;
+import com.google.gson.Gson;
+import com.storage.ObjectAccessor;
 
 public class DeviceApplicationDetails {
 
-	private Context context;
-	private List<ApplicationInfo> allApps;
 	private List<AppInfoDetails> appInfoDetails = new ArrayList<AppInfoDetails>();
 
 	public DeviceApplicationDetails(Context context) {
-		this.context = context;
-		List<ApplicationInfo> allApps = context.getPackageManager().getInstalledApplications(PackageManager.GET_META_DATA);
-		this.allApps = allApps;
-		for (ApplicationInfo aInfo : allApps) {
-			appInfoDetails.add(new AppInfoDetails(aInfo , aInfo.loadLabel(context.getPackageManager()).toString()));
-		}
+		appInfoDetails = Utilities.getInstalledApplication(context);
 	}
 
-	private class AppInfoDetails {
+	public List<AppInfoDetails> getInstalledApplicationByName(String name) {
 
-		private ApplicationInfo aInfo;
-		private String appName;
-
-		public AppInfoDetails(ApplicationInfo aInfo, String appName) {
-			this.aInfo = aInfo;
-			this.appName = appName;
-		}
-
-		private String getAppName() {
-			return this.appName;
-		}
-
-		private ApplicationInfo getAppInfo() {
-			return this.aInfo;
-		}
-
-	}
-
-	public List<ApplicationInfo> getInstalledApplicationByName(String name) {
-
-		List<ApplicationInfo> filteredApps = new ArrayList<ApplicationInfo>();
+		List<AppInfoDetails> filteredApps = new ArrayList<AppInfoDetails>();
 		long startTime = System.currentTimeMillis();
 
-		// Load map with application name and ApplicationInfo to improve
-		// performance
+/*		Try to find if applicaiton contains an icon. e.g google plus contains '+' 
+		but does not have a plus in its name*/
+		if (name.equalsIgnoreCase("p") || name.equalsIgnoreCase("l")
+				|| name.equalsIgnoreCase("u") || name.equalsIgnoreCase("s")) {
+			name = "google";
+		}
 		for (AppInfoDetails aInfo : appInfoDetails) {
 
 			if (aInfo.getAppName().toUpperCase().contains(name.toUpperCase())) {
-				filteredApps.add(aInfo.getAppInfo());
+				filteredApps.add(aInfo);
 			}
 
 		}
