@@ -1,21 +1,10 @@
 package com.applicationlauncher;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.application.AppInfoDetails;
-import com.application.AppInfoSerializable;
-import com.deviceapplications.DeviceApplicationDetails;
-import com.deviceapplications.Utilities;
-import com.google.gson.Gson;
-import com.storage.ObjectAccessor;
-import com.storage.STORAGE_NAME;
-
 import android.app.Activity;
-import android.content.pm.ApplicationInfo;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -26,14 +15,19 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.application.AppInfoDetails;
+import com.deviceapplications.DeviceApplicationDetails;
+import com.deviceapplications.Utilities;
+import com.storage.ObjectAccessor;
+import com.storage.STORAGE_NAME;
+ 
 public class MainActivity extends Activity {
 
 	private EditText appSearchTextBox;
 	private ListView mListAppInfo;
 	private DeviceApplicationDetails dad;
 	private AppInfoAdapter adapter;
-	private String userInput;
-
+	
 	private void updateView(String userInput) {
 		adapter = new AppInfoAdapter(this,
 				dad.getInstalledApplicationByName(userInput),
@@ -51,16 +45,7 @@ public class MainActivity extends Activity {
 
 		appSearchTextBox = (EditText) findViewById(R.id.editText);
 
-		//AppInfoSerializable ais = new AppInfoSerializable();
-		// ais.setAppName("test");
 		dad = new DeviceApplicationDetails(this.getApplicationContext());
-
-		//List<AppInfoSerializable> l = new ArrayList<AppInfoSerializable>();
-		//l.add(ais);
-
-		//ObjectAccessor oa = new ObjectAccessor(this.getApplicationContext());
-		//oa.writeObjectToMemory("myobject", l);
-
 
 		setupUi();
 
@@ -101,7 +86,7 @@ public class MainActivity extends Activity {
 		adapter = new AppInfoAdapter(this, aiList, getPackageManager());
 
 		mListAppInfo.setAdapter(adapter);
-		// adapter.getp
+
 		// implement event when an item on list view is selected
 		mListAppInfo.setOnItemClickListener(new OnItemClickListener() {
 			@Override

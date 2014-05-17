@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.application.AppInfoDetails;
-import com.application.AppInfoSerializable;
 import com.google.gson.Gson;
 import com.storage.ObjectAccessor;
 import com.storage.STORAGE_NAME;
@@ -53,69 +52,19 @@ public class Utilities {
 			String appName = aInfo.loadLabel(context.getPackageManager())
 					.toString();
 
-			if (!appName.equalsIgnoreCase("com.android.sdksetup")
-					&& !appName.equalsIgnoreCase("Package Access Helper")) {
+			if (!appName.startsWith("com.")
+					&& !appName.equalsIgnoreCase("Package Access Helper")
+						&& !appName.equalsIgnoreCase("AppTakeOff")) {
 				appInfoFilteredList.add(new AppInfoDetails(aInfo, appName , currentVal));
 			}
 		}
 
-		
-		/*
-		 * for(ApplicationInfo ai : appInfoList){ appInfoFilteredList.add(ai); }
-		 */
-
-/*		Gson gson = new Gson();
-		String json = gson.toJson(appInfoFilteredList);
-
-		ObjectAccessor oa = new ObjectAccessor(context);
-		if (oa.readObjectFromMemory("allobjects") == null) {
-			oa.writeObjectToMemory("allobjects", json);
-		}
-
-		List<AppInfoDetails> l2 = new ArrayList<AppInfoDetails>();
-		
-		List<AppInfoDetails> lll = gson.fromJson((String) new ObjectAccessor(
-				context).readObjectFromMemory("allobjects"), List.class);
-		
-		return lll;*/
 		Collections.sort(appInfoFilteredList);
 		
 		return appInfoFilteredList;
 
 	}
 
-	/*public static List<AppInfoSerializable> getInstalledApplicationSer(
-			Context context) {
-
-		ObjectAccessor oa = new ObjectAccessor(context);
-
-		List<ApplicationInfo> appInfoList = context.getPackageManager()
-				.getInstalledApplications(PackageManager.GET_META_DATA);
-		List<AppInfoSerializable> appInfoFilteredList = new ArrayList<AppInfoSerializable>();
-
-		for (ApplicationInfo aInfo : appInfoList) {
-
-			String appName = aInfo.loadLabel(context.getPackageManager())
-					.toString();
-
-			if (!appName.equalsIgnoreCase("com.android.sdksetup")
-					&& !appName.equalsIgnoreCase("Package Access Helper")) {
-
-				AppInfoSerializable ais = new AppInfoSerializable();
-				ais.setAppName(appName);
-				appInfoFilteredList.add(ais);
-
-			}
-
-		}
-
-		
-		 * for(ApplicationInfo ai : appInfoList){ appInfoFilteredList.add(ai); }
-		 
-
-		return appInfoFilteredList;
-	}
-*/
 	/*
 	 * Launch an application
 	 * 
@@ -126,12 +75,22 @@ public class Utilities {
 	 * @param pkgName Name of the package to run
 	 */
 	public static boolean launchApp(Context c, PackageManager pm, String pkgName) {
+		
+		if(pkgName.equalsIgnoreCase("com.android.phone")){
+			c.startActivity(new Intent(Intent.ACTION_DIAL));
+			
+			return true;
+		}
+		else {
 		// query the intent for lauching
 		Intent intent = pm.getLaunchIntentForPackage(pkgName);
 		// if intent is available
 		if (intent != null) {
 			try {
 				// launch application
+				
+
+				
 				c.startActivity(intent);
 				// if succeed
 				return true;
@@ -144,6 +103,10 @@ public class Utilities {
 				// display message
 				toast.show();
 			}
+			catch (Exception e){
+				e.printStackTrace();
+			}
+		}
 		}
 		// by default, fail to launch
 		return false;

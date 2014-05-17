@@ -6,14 +6,16 @@ import java.util.List;
 import java.util.Map;
 
 import com.application.AppInfoDetails;
-import com.application.AppInfoSerializable;
 import com.applicationlauncher.R;
-import com.storage.ObjectAccessor;
+import com.storage.ObjectAccessor; 
 import com.storage.STORAGE_NAME;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ScaleDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,15 +26,7 @@ import android.widget.TextView;
 public class AppInfoAdapter extends BaseAdapter {
 	private Context context;
 	private List<AppInfoDetails> mListAppInfo;
-	private List<AppInfoSerializable> appInfoSer = new ArrayList<AppInfoSerializable>();
 
-	public List<AppInfoSerializable> getAppInfoSer() {
-		return appInfoSer;
-	}
-
-	public void setAppInfoSer(List<AppInfoSerializable> appInfoSer) {
-		this.appInfoSer = appInfoSer;
-	}
 
 	private PackageManager mPanager;
 
@@ -58,7 +52,7 @@ public class AppInfoAdapter extends BaseAdapter {
 	public long getItemId(int position) {
 		return position;
 	}
-
+	
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		// get the selected entry
@@ -80,8 +74,16 @@ public class AppInfoAdapter extends BaseAdapter {
 		TextView tvAppName = (TextView) view.findViewById(R.id.tvName);
 
 		// set data to display
-		ivAppIcon.setImageDrawable(aInfo.loadIcon(mPanager));
-
+		Drawable appImage = aInfo.loadIcon(mPanager);
+		//ScaleDrawable sd = new ScaleDrawable(appImage, 0, 0.01f, 0.01f); 
+		//sd.get
+		//	sd.setLevel(8000);
+		
+		//appImage.setBounds(0, 0, 50, 50);
+		
+		//if(appImage.getIntrinsicHeight() == 72){
+		ivAppIcon.setImageDrawable(appImage);
+		//}
 		System.out.println("Loading label " + aInfo.loadLabel(mPanager));
 
 		ObjectAccessor oa = new ObjectAccessor(this.context);
