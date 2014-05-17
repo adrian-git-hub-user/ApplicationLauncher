@@ -14,6 +14,7 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ScaleDrawable;
 import android.view.LayoutInflater;
@@ -52,7 +53,7 @@ public class AppInfoAdapter extends BaseAdapter {
 	public long getItemId(int position) {
 		return position;
 	}
-	
+
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		// get the selected entry
@@ -75,15 +76,9 @@ public class AppInfoAdapter extends BaseAdapter {
 
 		// set data to display
 		Drawable appImage = aInfo.loadIcon(mPanager);
-		//ScaleDrawable sd = new ScaleDrawable(appImage, 0, 0.01f, 0.01f); 
-		//sd.get
-		//	sd.setLevel(8000);
-		
-		//appImage.setBounds(0, 0, 50, 50);
-		
-		//if(appImage.getIntrinsicHeight() == 72){
+
 		ivAppIcon.setImageDrawable(appImage);
-		//}
+		
 		System.out.println("Loading label " + aInfo.loadLabel(mPanager));
 
 		ObjectAccessor oa = new ObjectAccessor(this.context);
