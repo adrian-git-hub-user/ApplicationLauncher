@@ -47,14 +47,23 @@ public class Utilities {
 
 		for (ApplicationInfo aInfo : appInfoList) {
 
-			Integer currentVal = appUsage.get(aInfo.packageName);
+			String packageName = aInfo.packageName;
+			
+			Integer currentVal = appUsage.get(packageName);
 			
 			String appName = aInfo.loadLabel(context.getPackageManager())
 					.toString();
 
 			if (!appName.startsWith("com.")
 					&& !appName.equalsIgnoreCase("Package Access Helper")
-						&& !appName.equalsIgnoreCase("AppTakeOff")) {
+						&& !appName.equalsIgnoreCase("AppTakeOff")
+						&& !appName.equalsIgnoreCase("Google Search")
+						&& !appName.equalsIgnoreCase("System UI")
+						&& !appName.equalsIgnoreCase("Dual Clock (Digital)")
+						&& !appName.equalsIgnoreCase("Little Pet Shop")
+						&& !appName.equalsIgnoreCase("Samsung WatchON Video")
+						&& !packageName.equalsIgnoreCase("com.sec.android.SimpleWidget")
+						&& !appName.toUpperCase().contains("WIDGET")) {
 				appInfoFilteredList.add(new AppInfoDetails(aInfo, appName , currentVal));
 			}
 		}

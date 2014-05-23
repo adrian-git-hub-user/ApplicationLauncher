@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
@@ -104,6 +106,27 @@ public class MainActivity extends Activity {
 				String packageName = appInfo.getAppInfo().packageName;
 				
 				addUsage(packageName);
+				
+				if(com.application.Config.DISPLAY_PACKAGE_NAME){
+                AlertDialog.Builder builder1 = new AlertDialog.Builder(parent.getContext());
+                builder1.setMessage(packageName);
+                builder1.setCancelable(true);
+                builder1.setPositiveButton("Yes",
+                        new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+                builder1.setNegativeButton("No",
+                        new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+                AlertDialog alert11 = builder1.create();
+                alert11.show();
+				}
 				
 				// launch the selected application
 				Utilities.launchApp(parent.getContext(), getPackageManager(),

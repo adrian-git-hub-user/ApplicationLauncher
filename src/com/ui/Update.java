@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.app.Activity;    
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -16,6 +18,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import com.application.AppInfoDetails;
 import com.applicationlauncher.AppInfoAdapter;
 import com.applicationlauncher.R;
+import com.applicationlauncher.R.color;
 import com.deviceapplications.DeviceApplicationDetails;
 import com.deviceapplications.Utilities;
 import com.storage.ObjectAccessor;
@@ -81,7 +84,30 @@ public class Update extends Activity {
                 // get selected item on the list
                 AppInfoDetails appInfo = (AppInfoDetails)appInfoAdapter.getItem(pos);
 
+
                 String packageName = appInfo.getAppInfo().packageName;
+
+                if(com.application.Config.DISPLAY_PACKAGE_NAME){
+                AlertDialog.Builder builder1 = new AlertDialog.Builder(parent.getContext());
+                builder1.setMessage(packageName);
+                builder1.setCancelable(true);
+                builder1.setPositiveButton("Yes",
+                        new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+                builder1.setNegativeButton("No",
+                        new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+                AlertDialog alert11 = builder1.create();
+                alert11.show();
+                }
+                
                 addUsage(packageName);
                 // launch the selected application
                 Utilities.launchApp(parent.getContext(), getPackageManager(), appInfo.getAppInfo().packageName);
